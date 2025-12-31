@@ -1,0 +1,21 @@
+<launch>
+  <!-- Load Mission Parameters -->
+  <arg name="mission_file" default="$(find turtlebot3_cleaning)/config/mission.yaml"/>
+
+  <!-- Navigation -->
+  <include file="$(find turtlebot3_cleaning)/launch/navigation.launch"/>
+
+  <node pkg="turtlebot3_cleaning" type="task_manager_node" name="task_manager" output="screen">
+    <rosparam command="load" file="$(arg mission_file)"/>
+  </node>
+
+  <!-- Start QR Reader -->
+  <node pkg="turtlebot3_cleaning" type="qr_reader_node" name="qr_reader" output="screen">
+    <param name="image_topic" value="/camera/rgb/image_raw"/>
+  </node>
+
+
+  <!-- Auto Recovery Monitor -->
+  <node pkg="turtlebot3_cleaning" type="auto_recovery.py" name="auto_recovery_monitor" output="screen" launch-prefix="python3" />
+
+</launch>

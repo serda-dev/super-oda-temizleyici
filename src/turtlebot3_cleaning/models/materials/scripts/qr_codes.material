@@ -1,0 +1,59 @@
+material Cleaning/QR_LIVINGROOM
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture qr_livingroom.png
+        scale 1 1
+      }
+    }
+  }
+}
+
+material Cleaning/QR_KITCHEN
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture qr_kitchen.png
+        scale 1 1
+      }
+    }
+  }
+}
+
+material Cleaning/QR_BEDROOM
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture qr_bedroom.png
+        scale 1 1
+      }
+    }
+  }
+}
+
+material Cleaning/QR_CORRIDOR
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture qr_corridor.png
+        scale 1 1
+      }
+    }
+  }
+}

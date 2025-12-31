@@ -1,0 +1,11 @@
+<launch>
+  <!-- Load Mission Parameters -->
+  <group ns="mission_config">
+    <rosparam file="$(find turtlebot3_cleaning)/config/mission.yaml" command="load" />
+  </group>
+
+  <!-- Start Nodes -->
+  <node pkg="turtlebot3_cleaning" type="qr_detector_node.py" name="qr_detector_node" output="screen" />
+  <node pkg="turtlebot3_cleaning" type="waypoint_navigator_node.py" name="waypoint_navigator_node" output="screen" />
+  <node pkg="turtlebot3_cleaning" type="mission_manager_node.py" name="mission_manager_node" output="screen" />
+</launch>

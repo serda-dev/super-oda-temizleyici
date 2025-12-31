@@ -1,0 +1,41 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="model" default="$(optenv TURTLEBOT3_MODEL burger)" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="x_pos" default="-3.0"/>
+  <arg name="y_pos" default="1.0"/>
+  <arg name="z_pos" default="0.0"/>
+
+  <!-- Gazebo World -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/turtlebot3_house.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <!-- Load Robot Description -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
+
+  <!-- Spawn Robot -->
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model turtlebot3_$(arg model) -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
+
+  <!-- Robot State Publisher -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" value=""/>
+  </node>
+
+  <!-- QR Codes -->
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_qr_livingroom" args="-sdf -model qr_livingroom -x 0.5 -y 4.0 -z 0.5 -Y 0 -param qr_livingroom_sdf" />
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_qr_kitchen" args="-sdf -model qr_kitchen -x -6.5 -y 3.0 -z 0.5 -Y 1.57 -param qr_kitchen_sdf" />
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_qr_bedroom" args="-sdf -model qr_bedroom -x -8.5 -y -1.0 -z 0.5 -Y 3.14 -param qr_bedroom_sdf" />
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_qr_corridor" args="-sdf -model qr_corridor -x 1.0 -y -1.0 -z 0.5 -Y -1.57 -param qr_corridor_sdf" />
+
+  <!-- QR Code SDF Definitions on Parameter Server -->
+  <param name="qr_livingroom_sdf" value="&lt;sdf version='1.4'&gt;&lt;model name='qr_livingroom'&gt;&lt;static&gt;true&lt;/static&gt;&lt;link name='link'&gt;&lt;visual name='visual'&gt;&lt;geometry&gt;&lt;box&gt;&lt;size&gt;0.01 0.25 0.25&lt;/size&gt;&lt;/box&gt;&lt;/geometry&gt;&lt;material&gt;&lt;script&gt;&lt;uri&gt;file://$(find turtlebot3_cleaning)/models/materials/scripts&lt;/uri&gt;&lt;uri&gt;file://$(find turtlebot3_cleaning)/models/materials/textures&lt;/uri&gt;&lt;name&gt;Cleaning/QR_LIVINGROOM&lt;/name&gt;&lt;/script&gt;&lt;/material&gt;&lt;/visual&gt;&lt;/link&gt;&lt;/model&gt;&lt;/sdf&gt;" />
+  <param name="qr_kitchen_sdf" value="&lt;sdf version='1.4'&gt;&lt;model name='qr_kitchen'&gt;&lt;static&gt;true&lt;/static&gt;&lt;link name='link'&gt;&lt;visual name='visual'&gt;&lt;geometry&gt;&lt;box&gt;&lt;size&gt;0.01 0.25 0.25&lt;/size&gt;&lt;/box&gt;&lt;/geometry&gt;&lt;material&gt;&lt;script&gt;&lt;uri&gt;file://$(find turtlebot3_cleaning)/models/materials/scripts&lt;/uri&gt;&lt;uri&gt;file://$(find turtlebot3_cleaning)/models/materials/textures&lt;/uri&gt;&lt;name&gt;Cleaning/QR_KITCHEN&lt;/name&gt;&lt;/script&gt;&lt;/material&gt;&lt;/visual&gt;&lt;/link&gt;&lt;/model&gt;&lt;/sdf&gt;" />
+  <param name="qr_bedroom_sdf" value="&lt;sdf version='1.4'&gt;&lt;model name='qr_bedroom'&gt;&lt;static&gt;true&lt;/static&gt;&lt;link name='link'&gt;&lt;visual name='visual'&gt;&lt;geometry&gt;&lt;box&gt;&lt;size&gt;0.01 0.25 0.25&lt;/size&gt;&lt;/box&gt;&lt;/geometry&gt;&lt;material&gt;&lt;script&gt;&lt;uri&gt;file://$(find turtlebot3_cleaning)/models/materials/scripts&lt;/uri&gt;&lt;uri&gt;file://$(find turtlebot3_cleaning)/models/materials/textures&lt;/uri&gt;&lt;name&gt;Cleaning/QR_BEDROOM&lt;/name&gt;&lt;/script&gt;&lt;/material&gt;&lt;/visual&gt;&lt;/link&gt;&lt;/model&gt;&lt;/sdf&gt;" />
+  <param name="qr_corridor_sdf" value="&lt;sdf version='1.4'&gt;&lt;model name='qr_corridor'&gt;&lt;static&gt;true&lt;/static&gt;&lt;link name='link'&gt;&lt;visual name='visual'&gt;&lt;geometry&gt;&lt;box&gt;&lt;size&gt;0.01 0.25 0.25&lt;/size&gt;&lt;/box&gt;&lt;/geometry&gt;&lt;material&gt;&lt;script&gt;&lt;uri&gt;file://$(find turtlebot3_cleaning)/models/materials/scripts&lt;/uri&gt;&lt;uri&gt;file://$(find turtlebot3_cleaning)/models/materials/textures&lt;/uri&gt;&lt;name&gt;Cleaning/QR_CORRIDOR&lt;/name&gt;&lt;/script&gt;&lt;/material&gt;&lt;/visual&gt;&lt;/link&gt;&lt;/model&gt;&lt;/sdf&gt;" />
+</launch>

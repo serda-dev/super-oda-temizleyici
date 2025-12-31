@@ -1,0 +1,11 @@
+obstacle_range: 3.0
+raytrace_range: 3.5
+
+footprint: [[-0.105, -0.105], [-0.105, 0.105], [0.041, 0.105], [0.041, -0.105]]
+#robot_radius: 0.105
+
+# Aggressive tuning for tight spaces
+inflation_radius: 0.25  # Only inflate slightly more than robot radius
+cost_scaling_factor: 10.0 # Costs drop off very quickly, allowing planning close to walls
+
+map_type: costmap

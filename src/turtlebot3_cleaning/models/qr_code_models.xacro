@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="qr_code_poster">
+
+  <xacro:macro name="qr_code_poster" params="name x y z yaw material">
+    <link name="${name}_link">
+      <visual>
+        <geometry>
+          <box size="0.01 0.2 0.2"/>
+        </geometry>
+        <material name="Gazebo/${material}"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.01 0.2 0.2"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+      </inertial>
+    </link>
+
+    <gazebo reference="${name}_link">
+      <material>${material}</material>
+      <static>true</static>
+    </gazebo>
+  </xacro:macro>
+  
+  <!-- Definitions will be instantiated in the launch file or a main URDF if preferred. 
+       However, spawning multiple simple SDF models is often easier. 
+       Let's stick to Xacro if we want to include it in a larger description, 
+       but for spawning loose items, a simple SDF is usually better. 
+       
+       Actually, spawning simple box models via 'spawn_model' with -sdf tag is easiest.
+       Let's create SDF strings directly in launch file or small sdf files. -->
+
+</robot>
