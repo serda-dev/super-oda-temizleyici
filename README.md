@@ -1,6 +1,6 @@
 # TurtleBot3 İle Oda Temizliği
 
-YT DEMO LİNKİ: https://youtu.be/5JacrlKR6MM
+YT DEMO LİNKİ: https://youtu.be/X5NI14PqFjg
 
 Bu ödevin konusu basittir. Turtlebot3 mapi ve sistem özellikleri kullanarak önceden tanımlanmış oda konumları ve temizlik rotalarını kullanarak oda temizliği yapacak bir sistem oluşturmaktır.
 
