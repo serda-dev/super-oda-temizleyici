@@ -2,6 +2,8 @@
 
 Bu paket, **TurtleBot3** robotları için iki aşamalı (haritalama ve temizlik) otonom bir çözüm sunar. Karmaşık ve hataya açık özel hareket algoritmaları yerine, ROS navigasyon yığınının (`move_base`, `gmapping`, `amcl`) ve `explore_lite` paketinin kararlılığını kullanır.
 
+[DEMO VİDEOSU](https://youtu.be/s3Tn_79ccaM)
+
 ## Özellikler
 
 *   **İki Aşamalı Yapı:** Haritalama (Mapping) ve Temizlik (Cleaning) süreçleri birbirinden tamamen ayrılmıştır.
