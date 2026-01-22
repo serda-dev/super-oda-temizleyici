@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!--
+  FAZ 2: Otonom Temizlik (Harita Üzerinde Gezinme)
+  ===============================================
+  KAYDEDİLMİŞ BİR HARİTA üzerinde explore_lite + map_server kullanır.
+  SLAM kullanılmaz - navigasyon için önceden oluşturulmuş harita temel alınır.
+  
+  KULLANICI AKIŞI:
+    1. Önce explore_mapping.launch ile haritalama aşamasını tamamlayın.
+    2. Haritayı kaydedin: rosrun map_server map_saver -f ~/catkin_ws/src/room_cleaner/maps/benim_haritam
+    3. Gerekirse aşağıdaki map_file argümanını güncelleyin.
+    4. Bu dosyayı başlatın.
+    5. Robot, temizleme yöneticisi aracılığıyla haritayı ızgara düzeninde gezer.
+  
+  Özel hareket kodu içermez - tamamen navigasyon hedefleri üzerinden çalışır.
+-->
+<launch>
+  <!-- Argümanlar -->
+  <arg name="model" default="burger"/>
+  <arg name="x_pos" default="0.0"/>
+  <arg name="y_pos" default="-0.5"/>
+  <arg name="z_pos" default="0.0"/>
+  <arg name="map_file" default="$(find room_cleaner)/maps/my_map.yaml"/>
+  
+  <env name="TURTLEBOT3_MODEL" value="$(arg model)"/>
+  
+  <!-- ===================== -->
+  <!-- GAZEBO SİMÜLASYONU    -->
+  <!-- ===================== -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/turtlebot3_world.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+  
+  <!-- Robotu Oluştur (Spawn) -->
+  <param name="robot_description" 
+         command="$(find xacro)/xacro $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro"/>
+  
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" 
+        args="-urdf -model turtlebot3_$(arg model) -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description"/>
+  
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" value="50.0"/>
+  </node>
+  
+  <!-- ===================== -->
+  <!-- HARİTA SUNUCUSU       -->
+  <!-- ===================== -->
+  <!-- Önceden oluşturulmuş haritayı yayınlar (SLAM yok) -->
+  <node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)"/>
+  
+  <!-- ===================== -->
+  <!-- AMCL (Konumlandırma)  -->
+  <!-- ===================== -->
+  <include file="$(find turtlebot3_navigation)/launch/amcl.launch">
+    <arg name="initial_pose_x" value="$(arg x_pos)"/>
+    <arg name="initial_pose_y" value="$(arg y_pos)"/>
+  </include>
+  
+  <!-- ===================== -->
+  <!-- MOVE_BASE (NAVİGASYON)-->
+  <!-- ===================== -->
+  <include file="$(find turtlebot3_navigation)/launch/move_base.launch">
+    <arg name="model" value="$(arg model)"/>
+  </include>
+  
+  <!-- ===================== -->
+  <!-- TEMİZLİK YÖNETİCİSİ   -->
+  <!-- ===================== -->
+  <!-- move_base hedefleri kullanarak otonom ızgara tabanlı kaplama sağlar -->
+  <node pkg="room_cleaner" type="cleaning_manager.py" name="cleaning_manager" output="screen">
+    <param name="cleaning/grid_resolution" value="0.5"/>
+    <param name="cleaning/goal_timeout" value="30.0"/>
+    <param name="cleaning/free_threshold" value="50"/>
+  </node>
+  
+  <!-- ===================== -->
+  <!-- RVIZ GÖRSELLEŞTİRME   -->
+  <!-- ===================== -->
+  <node pkg="rviz" type="rviz" name="rviz" 
+        args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/>
+
+</launch>

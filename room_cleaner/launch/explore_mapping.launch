@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+  FAZ 1: Otonom Haritalama
+  ========================
+  Keşif tabanlı haritalama (SLAM) için explore_lite ve slam_gmapping araçlarını kullanır.
+  
+  KULLANICI AKIŞI:
+    1. Bu dosyayı başlatın.
+    2. Robot otonom olarak çevreyi gezer ve harita oluşturur.
+    3. İşlem bittiğinde Ctrl+C ile durdurun.
+    4. Haritayı kaydedin: rosrun map_server map_saver -f ~/catkin_ws/src/room_cleaner/maps/benim_haritam
+  
+  Otomatik sonlanma yoktur - kullanıcı durdurana kadar devam eder.
+  Özel hareket kodu içermez - sadece explore_lite ve move_base kullanır.
+-->
+<launch>
+  <!-- Argümanlar -->
+  <arg name="model" default="burger"/>
+  <arg name="x_pos" default="0.0"/>
+  <arg name="y_pos" default="-0.5"/>
+  <arg name="z_pos" default="0.0"/>
+  
+  <env name="TURTLEBOT3_MODEL" value="$(arg model)"/>
+  
+  <!-- ===================== -->
+  <!-- GAZEBO SİMÜLASYONU    -->
+  <!-- ===================== -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/turtlebot3_world.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+  
+  <!-- Robotu Oluştur (Spawn) -->
+  <param name="robot_description" 
+         command="$(find xacro)/xacro $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro"/>
+  
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" 
+        args="-urdf -model turtlebot3_$(arg model) -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description"/>
+  
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" value="50.0"/>
+  </node>
+  
+  <!-- ===================== -->
+  <!-- SLAM (GMAPPING)       -->
+  <!-- ===================== -->
+  <include file="$(find turtlebot3_slam)/launch/turtlebot3_gmapping.launch">
+    <arg name="model" value="$(arg model)"/>
+  </include>
+  
+  <!-- ===================== -->
+  <!-- MOVE_BASE (NAVIGASYON)-->
+  <!-- ===================== -->
+  <include file="$(find turtlebot3_navigation)/launch/move_base.launch">
+    <arg name="model" value="$(arg model)"/>
+  </include>
+  
+  <!-- ===================== -->
+  <!-- EXPLORE_LITE (KEŞİF)  -->
+  <!-- ===================== -->
+  <!-- Otonom sınır keşfi (frontier exploration) düğümü -->
+  <node pkg="explore_lite" type="explore" respawn="false" name="explore" output="screen">
+    <param name="robot_base_frame" value="base_link"/>
+    <param name="costmap_topic" value="map"/>
+    <param name="costmap_updates_topic" value="map_updates"/>
+    <param name="visualize" value="true"/>
+    <param name="planner_frequency" value="0.33"/>
+    <param name="progress_timeout" value="30.0"/>
+    <param name="potential_scale" value="3.0"/>
+    <param name="orientation_scale" value="0.0"/>
+    <param name="gain_scale" value="1.0"/>
+    <param name="transform_tolerance" value="0.3"/>
+    <param name="min_frontier_size" value="0.5"/>
+  </node>
+  
+  <!-- ===================== -->
+  <!-- RVIZ GÖRSELLEŞTİRME   -->
+  <!-- ===================== -->
+  <node pkg="rviz" type="rviz" name="rviz" 
+        args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/>
+
+</launch>

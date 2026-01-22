@@ -1,0 +1,46 @@
+# Oda Temizleyici Yapılandırması - Keşif Modu (Explore Lite)
+# =========================================================
+# Sağlamlık için özel keşif kodu yerine explore_lite kullanılması tercih edilmiştir.
+
+# Duvar Takipçisi - DEVRE DIŞI (Keşif işlemi explore_lite tarafından yönetilir)
+wall_follower:
+  front_distance_threshold: 0.45
+  side_distance_threshold: 0.30
+  linear_speed: 0.12
+  angular_speed: 0.5
+  front_angle_range: 30
+  right_angle_min: 270
+  right_angle_max: 330
+
+# Keşif - explore_lite izleme zamanlamaları
+exploration:
+  return_threshold: 0.8
+  return_count_required: 1
+  unknown_ratio_threshold: 0.30
+  check_interval: 5.0
+  map_stability_timeout: 60.0
+  min_exploration_time: 30.0       # Erken durdurmaya izin verilmeden önceki minimum süre (sn)
+  exploration_timeout: 60.0
+
+# Haritalama Erken Durdurma Kuralları (Kapalı alanlar için)
+mapping:
+  stagnation_time: 10.0            # Harita değişmediğinde beklenecek süre (sn) -> Tamamlandı sayılır
+  immobility_time: 10.0            # Robot hareket etmediğinde beklenecek süre (sn) -> Tamamlandı sayılır
+
+# Alan Kaplama (TEMİZLİK AŞAMASI)
+coverage:
+  lane_width: 0.25
+  linear_speed: 0.10
+  angular_speed: 0.4
+  min_obstacle_distance: 0.35
+  turn_duration: 1.0
+  max_stall_time: 30.0
+
+# Harita İzleyici (Map Monitor)
+map_monitor:
+  publish_rate: 1.0
+
+# Raporlama (Report)
+report:
+  output_directory: "maps"
+  map_name: "explored_map"
